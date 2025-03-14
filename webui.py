@@ -1,6 +1,5 @@
 import pdb
 import logging
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -144,7 +143,9 @@ async def run_browser_agent(
         use_vision,
         max_actions_per_step,
         tool_calling_method,
-        chrome_cdp
+        chrome_cdp,
+        planner_model,  # New parameter
+        extraction_model  # New parameter
 ):
     global _global_agent_state
     _global_agent_state.clear_stop()  # Clear any previous stop requests
@@ -177,6 +178,21 @@ async def run_browser_agent(
             base_url=llm_base_url,
             api_key=llm_api_key,
         )
+
+        # Initialize planner and extraction models
+        planner_llm = utils.get_llm_model(
+            provider="ollama",
+            model_name=planner_model,  # Use the configured planner model
+            temperature=0.0,
+            base_url=llm_base_url
+        )
+        page_extraction_llm = utils.get_llm_model(
+            provider="ollama",
+            model_name=extraction_model,  # Use the configured extraction model
+            temperature=0.0,
+            base_url=llm_base_url
+        )
+
         if agent_type == "org":
             final_result, errors, model_actions, model_thoughts, trace_file, history_file = await run_org_agent(
                 llm=llm,
@@ -199,6 +215,8 @@ async def run_browser_agent(
         elif agent_type == "custom":
             final_result, errors, model_actions, model_thoughts, trace_file, history_file = await run_custom_agent(
                 llm=llm,
+                planner_llm=planner_llm,  # Pass the planner model
+                page_extraction_llm=page_extraction_llm,  # Pass the extraction model
                 use_own_browser=use_own_browser,
                 keep_browser_open=keep_browser_open,
                 headless=headless,
@@ -366,6 +384,8 @@ async def run_org_agent(
 
 async def run_custom_agent(
         llm,
+        planner_llm,  # New parameter
+        page_extraction_llm,  # New parameter
         use_own_browser,
         keep_browser_open,
         headless,
@@ -406,7 +426,6 @@ async def run_custom_agent(
         controller = CustomController()
 
         # Initialize global browser if needed
-        #if chrome_cdp not empty string nor None
         if ((_global_browser is None) or (cdp_url and cdp_url != "" and cdp_url != None)) :
             _global_browser = CustomBrowser(
                 config=BrowserConfig(
@@ -438,6 +457,8 @@ async def run_custom_agent(
                 add_infos=add_infos,
                 use_vision=use_vision,
                 llm=llm,
+                planner_llm=planner_llm,  # Pass the planner model
+                page_extraction_llm=page_extraction_llm,  # Pass the extraction model
                 browser=_global_browser,
                 browser_context=_global_browser_context,
                 controller=controller,
@@ -500,7 +521,9 @@ async def run_with_stream(
     use_vision,
     max_actions_per_step,
     tool_calling_method,
-    chrome_cdp
+    chrome_cdp,
+    planner_model,  # New parameter
+    extraction_model  # New parameter
 ):
     global _global_agent_state
     stream_vw = 80
@@ -530,7 +553,9 @@ async def run_with_stream(
             use_vision=use_vision,
             max_actions_per_step=max_actions_per_step,
             tool_calling_method=tool_calling_method,
-            chrome_cdp=chrome_cdp
+            chrome_cdp=chrome_cdp,
+            planner_model=planner_model,  # Pass the planner model
+            extraction_model=extraction_model  # Pass the extraction model
         )
         # Add HTML content at the start of the result array
         html_content = f"<h1 style='width:{stream_vw}vw; height:{stream_vh}vh'>Using browser...</h1>"
@@ -564,7 +589,9 @@ async def run_with_stream(
                     use_vision=use_vision,
                     max_actions_per_step=max_actions_per_step,
                     tool_calling_method=tool_calling_method,
-                    chrome_cdp=chrome_cdp
+                    chrome_cdp=chrome_cdp,
+                    planner_model=planner_model,  # Pass the planner model
+                    extraction_model=extraction_model  # Pass the extraction model
                 )
             )
 
@@ -793,6 +820,22 @@ def create_ui(config, theme_name="Ocean"):
                         allow_custom_value=True,  # Allow users to input custom model names
                         info="Select a model from the dropdown or type a custom model name"
                     )
+                    planner_model = gr.Dropdown(
+                        label="Planner Model",
+                        choices=utils.model_names['ollama'],
+                        value=config['planner_model'],
+                        interactive=True,
+                        allow_custom_value=True,
+                        info="Select the model for planning tasks"
+                    )
+                    extraction_model = gr.Dropdown(
+                        label="Extraction Model",
+                        choices=utils.model_names['ollama'],
+                        value=config['extraction_model'],
+                        interactive=True,
+                        allow_custom_value=True,
+                        info="Select the model for extracting information"
+                    )
                     llm_num_ctx = gr.Slider(
                         minimum=2**8,
                         maximum=2**16,
@@ -997,7 +1040,8 @@ def create_ui(config, theme_name="Ocean"):
                             agent_type, llm_provider, llm_model_name, llm_num_ctx, llm_temperature, llm_base_url, llm_api_key,
                             use_own_browser, keep_browser_open, headless, disable_security, window_w, window_h,
                             save_recording_path, save_agent_history_path, save_trace_path,  # Include the new path
-                            enable_recording, task, add_infos, max_steps, use_vision, max_actions_per_step, tool_calling_method, chrome_cdp
+                            enable_recording, task, add_infos, max_steps, use_vision, max_actions_per_step, tool_calling_method, chrome_cdp,
+                            planner_model, extraction_model  # New parameters
                         ],
                     outputs=[
                         browser_view,           # Browser view
@@ -1085,7 +1129,7 @@ def create_ui(config, theme_name="Ocean"):
                         llm_provider, llm_model_name, llm_num_ctx, llm_temperature, llm_base_url, llm_api_key,
                         use_own_browser, keep_browser_open, headless, disable_security, enable_recording,
                         window_w, window_h, save_recording_path, save_trace_path, save_agent_history_path,
-                        task, config_status
+                        task, planner_model, extraction_model, config_status  # Include new fields
                     ]
                 )
 
@@ -1096,7 +1140,7 @@ def create_ui(config, theme_name="Ocean"):
                         llm_provider, llm_model_name, llm_num_ctx, llm_temperature, llm_base_url, llm_api_key,
                         use_own_browser, keep_browser_open, headless, disable_security,
                         enable_recording, window_w, window_h, save_recording_path, save_trace_path,
-                        save_agent_history_path, task,
+                        save_agent_history_path, task, planner_model, extraction_model  # Include new fields
                     ],  
                     outputs=[config_status]
                 )
