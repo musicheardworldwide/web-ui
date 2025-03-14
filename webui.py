@@ -927,6 +927,7 @@ def create_ui(config, theme_name="Ocean"):
                 add_infos = gr.Textbox(
                     label="Additional Information",
                     lines=3,
+                    value="JSON responses ONLY",
                     placeholder="Add any helpful context or instructions...",
                     info="Optional hints to help the LLM complete the task",
                 )
