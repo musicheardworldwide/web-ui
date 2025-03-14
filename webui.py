@@ -921,7 +921,7 @@ def create_ui(config, theme_name="Ocean"):
                     label="Task Description",
                     lines=4,
                     placeholder="Enter your task here...",
-                    value=config['1. Go to google.com and search for `Wes Mane Class Youtube` and find the link that goes to that song on youtube. Get to where you can start the video and when you do, move on to the next task. 2. Open a new tab and go to securexchange.online. Find the login button in the top navigation and use the credentials system@musicheardworldwide.com with password `testing123!`. once you're logged in, move onto the next task. 3. Go to https://onlinenotepad.org/notepad and write in the notepad `Thanks for watching me do my thing!, respect always, Sin AI'],
+                    value=config['task'],
                     info="Describe what you want the agent to do",
                 )
                 add_infos = gr.Textbox(
