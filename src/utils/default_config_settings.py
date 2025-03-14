@@ -13,7 +13,7 @@ def default_config():
         "use_vision": True,
         "tool_calling_method": "auto",
         "llm_provider": "ollama",
-        "llm_model_name": "llama3.2:3b,
+        "llm_model_name": "llama3.2:3b",
         "llm_num_ctx": 32000,
         "llm_temperature": 1.0,
         "llm_base_url": "https://api.sendthemmoney.com/v1",
@@ -28,7 +28,7 @@ def default_config():
         "save_recording_path": "./tmp/record_videos",
         "save_trace_path": "./tmp/traces",
         "save_agent_history_path": "./tmp/agent_history",
-        "task": "go to musicheardworldwide.com,
+        "task": "go to musicheardworldwide.com",
     }
 
 
