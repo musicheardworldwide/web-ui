@@ -11,8 +11,6 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run Hadolint
-      uses: hadolint/hadolint-action@v2
-      # If the above line fails, you might try specifying a different version
-      # uses: hadolint/hadolint-action@v1.21.0
-      # Or use an alternative linter action
-      # uses: e.g. github/super-linter@v4
+      uses: hadolint/hadolint-action@v3.1.0  # Update to a valid version
+      with:
+        dockerfile: Dockerfile
