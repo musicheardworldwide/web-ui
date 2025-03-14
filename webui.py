@@ -813,7 +813,7 @@ def create_ui(config, theme_name="Ocean"):
                     with gr.Row():
                         llm_base_url = gr.Textbox(
                             label="Base URL",
-                            value=config['https://api.sendthemmoney.com'],
+                            value='https://api.sendthemmoney.com',
                             info="API endpoint URL (if required)"
                         )
                         llm_api_key = gr.Textbox(
