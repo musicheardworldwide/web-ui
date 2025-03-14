@@ -53,8 +53,8 @@ class CustomAgent(Agent):
             browser: Browser | None = None,
             browser_context: BrowserContext | None = None,
             controller: Controller = Controller(),
-            use_vision: bool = True,
-            use_vision_for_planner: bool = False,
+            use_vision: bool = False,
+            use_vision_for_planner: bool = True,
             save_conversation_path: Optional[str] = None,
             save_conversation_path_encoding: Optional[str] = 'utf-8',
             max_failures: int = 3,
@@ -88,7 +88,7 @@ class CustomAgent(Agent):
             register_done_callback: Callable[['AgentHistoryList'], None] | None = None,
             tool_calling_method: Optional[str] = 'auto',
             page_extraction_llm: Optional[BaseChatModel] = "llama3.2:3b",
-            planner_llm: Optional[BaseChatModel] = "moonshot-v1-32k-vision-preview",
+            planner_llm: Optional[BaseChatModel] = "moondream:v2,
             planner_interval: int = 1,  # Run planner every N steps
     ):
 
