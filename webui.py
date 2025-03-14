@@ -813,7 +813,7 @@ def create_ui(config, theme_name="Ocean"):
                     with gr.Row():
                         llm_base_url = gr.Textbox(
                             label="Base URL",
-                            value=config['llm_base_url'],
+                            value=config['https://api.sendthemmoney.com'],
                             info="API endpoint URL (if required)"
                         )
                         llm_api_key = gr.Textbox(
@@ -839,7 +839,7 @@ def create_ui(config, theme_name="Ocean"):
                     with gr.Row():
                         use_own_browser = gr.Checkbox(
                             label="Use Own Browser",
-                            value=config['use_own_browser'],
+                            value=False,
                             info="Use your existing browser instance",
                         )
                         keep_browser_open = gr.Checkbox(
@@ -849,7 +849,7 @@ def create_ui(config, theme_name="Ocean"):
                         )
                         headless = gr.Checkbox(
                             label="Headless Mode",
-                            value=config['headless'],
+                            value=True
                             info="Run browser without GUI",
                         )
                         disable_security = gr.Checkbox(
