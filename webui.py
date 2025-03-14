@@ -724,7 +724,7 @@ def create_ui(config, theme_name="Ocean"):
     """
 
     with gr.Blocks(
-            title="Music Heard Worldwide, theme=theme_map[theme_name], css=css
+            title="Music Heard Worldwide", theme=theme_map[theme_name], css=css
     ) as demo:
         with gr.Row():
             gr.Markdown(
