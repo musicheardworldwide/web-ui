@@ -2,39 +2,39 @@ FROM python:3.11-slim
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget=1.20.3-1ubuntu2 \
+    wget=1.20.3-1ubuntu1 \
     netcat-traditional=1.10-41.1 \
     gnupg=2.2.19-3ubuntu2.1 \
     curl=7.68.0-1ubuntu2.6 \
-    unzip=6.0-25ubuntu1.1 \
-    xvfb=2:1.20.9-2ubuntu1.6 \
-    libgconf-2-4=3.2.6-6 \
-    libxss1=1:1.2.3-1build1 \
-    libnss3=2:3.49.1-1ubuntu1.5 \
+    unzip=6.0-25ubuntu1 \
+    xvfb=2:1.20.9-1ubuntu1 \
+    libgconf-2-4=3.2.6-6ubuntu1 \
+    libxss1=1:1.2.3-1 \
+    libnss3=2:3.49.1-1ubuntu1 \
     libnspr4=2:4.25-1 \
-    libasound2=1.2.2-2.1ubuntu2.5 \
+    libasound2=1.2.2-2.1ubuntu2.1 \
     libatk1.0-0=2.35.1-1ubuntu2 \
     libatk-bridge2.0-0=2.34.2-0ubuntu2 \
-    libcups2=2.3.1-9ubuntu1.1 \
-    libdbus-1-3=1.12.16-2ubuntu2.1 \
-    libdrm2=2.4.101-2ubuntu1.2 \
+    libcups2=2.3.1-9ubuntu1 \
+    libdbus-1-3=1.12.16-2ubuntu2 \
+    libdrm2=2.4.101-1ubuntu1 \
     libgbm1=20.0.8-0ubuntu1~20.04.1 \
     libgtk-3-0=3.24.20-0ubuntu1 \
     libxcomposite1=1:0.4.5-1 \
     libxdamage1=1:1.1.5-2 \
     libxfixes3=1:5.0.3-2 \
     libxrandr2=2:1.5.2-0ubuntu1 \
-    xdg-utils=1.1.3-2ubuntu1.20.04.2 \
+    xdg-utils=1.1.3-2ubuntu1 \
     fonts-liberation=1:1.07.4-11 \
-    dbus=1.12.16-2ubuntu2.1 \
+    dbus=1.12.16-2ubuntu2 \
     xauth=1:1.1-0ubuntu1 \
     x11vnc=0.9.13-6 \
     tigervnc-tools=1.10.1+dfsg-3 \
-    supervisor=4.2.2-2ubuntu0.1 \
+    supervisor=4.2.4-1 \
     net-tools=1.60+git20180626.aebd88e-1ubuntu1 \
-    procps=2:3.3.16-1ubuntu2.3 \
-    git=1:2.25.1-1ubuntu3.10 \
-    python3-numpy=1:1.17.4-5ubuntu3.1 \
+    procps=2:3.3.16-1ubuntu2 \
+    git=1:2.25.1-1ubuntu3 \
+    python3-numpy=1:1.17.4-5ubuntu3 \
     fontconfig=2.13.1-2ubuntu3 \
     fonts-dejavu=2.37-1 \
     fonts-dejavu-core=2.37-1 \
@@ -46,4 +46,39 @@ RUN git clone https://github.com/novnc/noVNC.git /opt/novnc \
     && git clone https://github.com/novnc/websockify /opt/novnc/utils/websockify \
     && ln -s /opt/novnc/vnc.html /opt/novnc/index.html
 
-# Set platform for ARM64 ▋
+# Set platform for ARM64 compatibility
+ARG TARGETPLATFORM=linux/amd64
+
+# Set up working directory
+WORKDIR /app
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install Playwright and browsers with system dependencies
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN playwright install --with-deps chromium && playwright install-deps
+
+# Copy the application code
+COPY . .
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV BROWSER_USE_LOGGING_LEVEL=info
+ENV CHROME_PATH=/ms-playwright/chromium-*/chrome-linux/chrome
+ENV ANONYMIZED_TELEMETRY=false
+ENV DISPLAY=:99
+ENV RESOLUTION=1920x1080x24
+ENV VNC_PASSWORD=Dullownation123!
+ENV CHROME_PERSISTENT_SESSION=true
+ENV RESOLUTION_WIDTH=1920
+ENV RESOLUTION_HEIGHT=1080
+
+# Set up supervisor configuration
+RUN mkdir -p /var/log/supervisor
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+EXPOSE 7788 6080 5901
+
+CMD ["/usr/bin/supervisord", "-c", /etc/supervisor/conf.d/supervisord.conf]
