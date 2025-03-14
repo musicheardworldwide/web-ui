@@ -849,7 +849,7 @@ def create_ui(config, theme_name="Ocean"):
                         )
                         headless = gr.Checkbox(
                             label="Headless Mode",
-                            value=True
+                            value=True,
                             info="Run browser without GUI",
                         )
                         disable_security = gr.Checkbox(
