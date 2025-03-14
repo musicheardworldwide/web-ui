@@ -49,7 +49,7 @@ class CustomAgent(Agent):
             self,
             task: str,
             llm: BaseChatModel,
-            add_infos: str = "",
+            add_infos: str = "Respond with ONLY JSON",
             browser: Browser | None = None,
             browser_context: BrowserContext | None = None,
             controller: Controller = Controller(),
