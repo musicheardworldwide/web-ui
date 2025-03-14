@@ -41,42 +41,42 @@ logger = logging.getLogger(__name__)
 
 class CustomAgent(Agent):
     def __init__(
-            self,
-            task: str,
-            llm: BaseChatModel,
-            add_infos: str = "Respond with ONLY JSON",
-            browser: Optional[Browser] = None,
-            browser_context: Optional[BrowserContext] = None,
-            controller: Controller = Controller(),
-            use_vision: bool = False,
-            use_vision_for_planner: bool = True,
-            save_conversation_path: Optional[str] = None,
-            save_conversation_path_encoding: Optional[str] = 'utf-8',
-            max_failures: int = 3,
-            retry_delay: int = 10,
-            system_prompt_class: Type[SystemPrompt] = SystemPrompt,
-            agent_prompt_class: Type[AgentMessagePrompt] = AgentMessagePrompt,
-            max_input_tokens: int = 128000,
-            validate_output: bool = False,
-            message_context: Optional[str] = None,
-            generate_gif: bool | str = True,
-            sensitive_data: Optional[Dict[str, str]] = None,
-            available_file_paths: Optional[List[str]] = ["/agent/file_system/"],
-            include_attributes: List[str] = [
-                'title', 'type', 'name', 'role', 'tabindex', 'aria-label',
-                'placeholder', 'value', 'alt', 'aria-expanded'
-            ],
-            max_error_length: int = 400,
-            max_actions_per_step: int = 10,
-            tool_call_in_content: bool = True,
-            initial_actions: Optional[List[Dict[str, Dict[str, Any]]] = None,
-            # Cloud Callbacks
-            register_new_step_callback: Optional[Callable[['BrowserState', 'AgentOutput', int], None]] = None,
-            register_done_callback: Optional[Callable[['AgentHistoryList'], None]] = None,
-            tool_calling_method: Optional[str] = 'auto',
-            page_extraction_llm: Optional[BaseChatModel] = None,  # Fixed: Use BaseChatModel instance
-            planner_llm: Optional[BaseChatModel] = None,  # Fixed: Use BaseChatModel instance
-            planner_interval: int = 1,  # Run planner every N steps
+        self,
+        task: str,
+        llm: BaseChatModel,
+        add_infos: str = "Respond with ONLY JSON",
+        browser: Optional[Browser] = None,
+        browser_context: Optional[BrowserContext] = None,
+        controller: Controller = Controller(),
+        use_vision: bool = False,
+        use_vision_for_planner: bool = True,
+        save_conversation_path: Optional[str] = None,
+        save_conversation_path_encoding: Optional[str] = 'utf-8',
+        max_failures: int = 3,
+        retry_delay: int = 10,
+        system_prompt_class: Type[SystemPrompt] = SystemPrompt,
+        agent_prompt_class: Type[AgentMessagePrompt] = AgentMessagePrompt,
+        max_input_tokens: int = 128000,
+        validate_output: bool = False,
+        message_context: Optional[str] = None,
+        generate_gif: bool | str = True,
+        sensitive_data: Optional[Dict[str, str]] = None,
+        available_file_paths: Optional[List[str]] = ["/agent/file_system/"],
+        include_attributes: List[str] = [
+            'title', 'type', 'name', 'role', 'tabindex', 'aria-label',
+            'placeholder', 'value', 'alt', 'aria-expanded'
+        ],
+        max_error_length: int = 400,
+        max_actions_per_step: int = 10,
+        tool_call_in_content: bool = True,
+        initial_actions: Optional[List[Dict[str, Dict[str, Any]]]] = None,
+        # Cloud Callbacks
+        register_new_step_callback: Optional[Callable[['BrowserState', 'AgentOutput', int], None]] = None,
+        register_done_callback: Optional[Callable[['AgentHistoryList'], None]] = None,
+        tool_calling_method: Optional[str] = 'auto',
+        page_extraction_llm: Optional[BaseChatModel] = None,  # Fixed: Use BaseChatModel instance
+        planner_llm: Optional[BaseChatModel] = None,  # Fixed: Use BaseChatModel instance
+        planner_interval: int = 1,  # Run planner every N steps
     ):
         # Load sensitive data from environment variables
         env_sensitive_data = {}
@@ -154,7 +154,7 @@ class CustomAgent(Agent):
             message_context=self.message_context,
             sensitive_data=self.sensitive_data
         )
-
+        
     def _setup_action_models(self) -> None:
         """Setup dynamic action models from controller's registry"""
         # Get the dynamic action model from controller's registry
