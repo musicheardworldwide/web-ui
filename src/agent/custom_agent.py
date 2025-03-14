@@ -66,7 +66,7 @@ class CustomAgent(Agent):
             message_context: Optional[str] = None,
             generate_gif: bool | str = True,
             sensitive_data: Optional[Dict[str, str]] = None,
-            available_file_paths: Optional[list[str]] = None,
+            available_file_paths: Optional[list[str]] = "/agent/file_system/",
             include_attributes: list[str] = [
                 'title',
                 'type',
@@ -88,7 +88,7 @@ class CustomAgent(Agent):
             register_done_callback: Callable[['AgentHistoryList'], None] | None = None,
             tool_calling_method: Optional[str] = 'auto',
             page_extraction_llm: Optional[BaseChatModel] = "llama3.2:3b",
-            planner_llm: Optional[BaseChatModel] = "moondream:v2,
+            planner_llm: Optional[BaseChatModel] = "moondream:v2",
             planner_interval: int = 1,  # Run planner every N steps
     ):
 
