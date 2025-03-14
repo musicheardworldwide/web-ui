@@ -29,6 +29,9 @@ def default_config():
         "save_trace_path": "./tmp/traces",
         "save_agent_history_path": "./tmp/agent_history",
         "task": "1. Go to google.com and search for `Wes Mane Class Youtube` and find the link that goes to that song on youtube. Get to where you can start the video and when you do, move on to the next task. 2. Open a new tab and go to securexchange.online. Find the login button in the top navigation and use the credentials system@musicheardworldwide.com with password `testing123!`. once you're logged in, move onto the next task. 3. Go to https://onlinenotepad.org/notepad and write in the notepad `Thanks for watching me do my thing!, respect always, Sin AI`",
+        # Add new fields for planning and extraction models
+        "planner_model": "moondream:v2",
+        "extraction_model": "llama3.2:3b",
     }
 
 
@@ -75,6 +78,9 @@ def save_current_config(*args):
         "save_trace_path": args[19],
         "save_agent_history_path": args[20],
         "task": args[21],
+        # Add new fields for planning and extraction models
+        "planner_model": args[22],
+        "extraction_model": args[23],
     }
     return save_config_to_file(current_config)
 
@@ -106,6 +112,9 @@ def update_ui_from_config(config_file):
                 gr.update(value=loaded_config.get("save_trace_path", "./tmp/traces")),
                 gr.update(value=loaded_config.get("save_agent_history_path", "./tmp/agent_history")),
                 gr.update(value=loaded_config.get("task", "1. Go to google.com and search for `Wes Mane Class Youtube` and find the link that goes to that song on youtube. Get to where you can start the video and when you do, move on to the next task. 2. Open a new tab and go to securexchange.online. Find the login button in the top navigation and use the credentials system@musicheardworldwide.com with password `testing123!`. once you're logged in, move onto the next task. 3. Go to https://onlinenotepad.org/notepad and write in the notepad `Thanks for watching me do my thing!, respect always, Sin AI")),
+                # Add new fields for planning and extraction models
+                gr.update(value=loaded_config.get("planner_model", "moondream:v2")),
+                gr.update(value=loaded_config.get("extraction_model", "llama3.2:3b")),
                 "Configuration loaded successfully."
             )
         else:
@@ -114,12 +123,14 @@ def update_ui_from_config(config_file):
                 gr.update(), gr.update(), gr.update(), gr.update(), gr.update(),
                 gr.update(), gr.update(), gr.update(), gr.update(), gr.update(),
                 gr.update(), gr.update(), gr.update(), gr.update(), gr.update(),
-                gr.update(), "Error: Invalid configuration file."
+                gr.update(), gr.update(), gr.update(),  # Add placeholders for new fields
+                "Error: Invalid configuration file."
             )
     return (
         gr.update(), gr.update(), gr.update(), gr.update(), gr.update(),
         gr.update(), gr.update(), gr.update(), gr.update(), gr.update(),
         gr.update(), gr.update(), gr.update(), gr.update(), gr.update(),
         gr.update(), gr.update(), gr.update(), gr.update(), gr.update(),
-        gr.update(), "No file selected."
+        gr.update(), gr.update(), gr.update(),  # Add placeholders for new fields
+        "No file selected."
     )
