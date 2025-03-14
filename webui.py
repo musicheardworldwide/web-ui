@@ -724,13 +724,13 @@ def create_ui(config, theme_name="Ocean"):
     """
 
     with gr.Blocks(
-            title="Browser Use WebUI", theme=theme_map[theme_name], css=css
+            title="Music Heard Worldwide, theme=theme_map[theme_name], css=css
     ) as demo:
         with gr.Row():
             gr.Markdown(
                 """
-                # 🌐 Browser Use WebUI
-                ### Control your browser with AI assistance
+                # 🌐 MHW Agent
+                ### Let our Agent work for you
                 """,
                 elem_classes=["header-text"],
             )
@@ -774,7 +774,7 @@ def create_ui(config, theme_name="Ocean"):
                             allow_custom_value=True,  # Allow users to input custom model names
                             choices=["auto", "json_schema", "function_calling"],
                             info="Tool Calls Funtion Name",
-                            visible=False
+                            visible=True
                         )
 
             with gr.TabItem("🔧 LLM Configuration", id=2):
@@ -787,7 +787,7 @@ def create_ui(config, theme_name="Ocean"):
                     )
                     llm_model_name = gr.Dropdown(
                         label="Model Name",
-                        choices=utils.model_names['openai'],
+                        choices=utils.model_names['ollama'],
                         value=config['llm_model_name'],
                         interactive=True,
                         allow_custom_value=True,  # Allow users to input custom model names
@@ -1122,7 +1122,7 @@ def create_ui(config, theme_name="Ocean"):
 
 def main():
     parser = argparse.ArgumentParser(description="Gradio UI for Browser Agent")
-    parser.add_argument("--ip", type=str, default="127.0.0.1", help="IP address to bind to")
+    parser.add_argument("--ip", type=str, default="0.0.0.0", help="IP address to bind to")
     parser.add_argument("--port", type=int, default=7788, help="Port to listen on")
     parser.add_argument("--theme", type=str, default="Ocean", choices=theme_map.keys(), help="Theme to use for the UI")
     parser.add_argument("--dark-mode", action="store_true", help="Enable dark mode")
