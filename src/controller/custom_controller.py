@@ -25,14 +25,14 @@ logger = logging.getLogger(__name__)
 
 
 class CustomController(Controller):
-    def __init__(self, exclude_actions: list[str] = [],
-                 output_model: Optional[Type[BaseModel]] = None):
+    def __init__(self, exclude_actions: list[str] = [], output_model: Optional[Type[BaseModel]] = None):
         super().__init__(exclude_actions=exclude_actions, output_model=output_model)
         self._register_custom_actions()
 
     def _register_custom_actions(self):
         """Register all custom browser actions"""
 
+        # Existing actions
         @self.registry.action("Copy text to clipboard")
         def copy_to_clipboard(text: str):
             pyperclip.copy(text)
@@ -44,8 +44,6 @@ class CustomController(Controller):
             page = await browser.get_current_page()
             await page.keyboard.type(text)
             return ActionResult(extracted_content=text)
-
-        # --- Additional Custom Actions ---
 
         @self.registry.action("Take Screenshot")
         async def take_screenshot(browser: BrowserContext):
@@ -100,12 +98,8 @@ class CustomController(Controller):
             logger.info(f"Current page URL: {url}")
             return ActionResult(extracted_content=f"Logged URL: {url}")
 
-        # --- New Additional Actions ---
-
         @self.registry.action("Open New Tab")
         async def open_new_tab(browser: BrowserContext, url: str):
-            # Opens a new tab with the given URL and switches focus to it.
-            # This assumes the browser instance supports new page creation.
             new_page = await browser.browser.new_page()
             await new_page.goto(url)
             return ActionResult(extracted_content=f"Opened new tab with URL: {url}")
@@ -157,7 +151,6 @@ class CustomController(Controller):
 
         @self.registry.action("Set Cookies")
         async def set_cookies(browser: BrowserContext, cookies: str):
-            # Expects cookies as a JSON string representing a list of cookie objects.
             page = await browser.get_current_page()
             try:
                 cookies_list = json.loads(cookies)
@@ -188,7 +181,8 @@ class CustomController(Controller):
                 return ActionResult(extracted_content="Navigation completed")
             except Exception as e:
                 return ActionResult(error=str(e))
-         # --- Advanced Navigation and Interaction ---
+
+        # --- Advanced Navigation and Interaction ---
         @self.registry.action("Scroll to Bottom of Page")
         async def scroll_to_bottom(browser: BrowserContext):
             page = await browser.get_current_page()
@@ -221,9 +215,11 @@ class CustomController(Controller):
         async def extract_all_links(browser: BrowserContext):
             page = await browser.get_current_page()
             try:
-                links = await page.evaluate('''() => {
-                    return Array.from(document.querySelectorAll('a')).map(a => a.href);
-                }''')
+                links = await page.evaluate(
+                    '''() => {
+                        return Array.from(document.querySelectorAll('a')).map(a => a.href);
+                    }'''
+                )
                 return ActionResult(extracted_content=json.dumps(links))
             except Exception as e:
                 return ActionResult(error=str(e))
@@ -232,9 +228,11 @@ class CustomController(Controller):
         async def extract_all_images(browser: BrowserContext):
             page = await browser.get_current_page()
             try:
-                images = await page.evaluate('''() => {
-                    return Array.from(document.querySelectorAll('img')).map(img => img.src);
-                }''')
+                images = await page.evaluate(
+                    '''() => {
+                        return Array.from(document.querySelectorAll('img')).map(img => img.src);
+                    }'''
+                )
                 return ActionResult(extracted_content=json.dumps(images))
             except Exception as e:
                 return ActionResult(error=str(e))
@@ -243,13 +241,15 @@ class CustomController(Controller):
         async def extract_table_data(browser: BrowserContext, selector: str):
             page = await browser.get_current_page()
             try:
-                table_data = await page.evaluate(f'''() => {
-                    const rows = Array.from(document.querySelectorAll('{selector} tr'));
-                    return rows.map(row => {
-                        const cells = Array.from(row.querySelectorAll('th, td'));
-                        return cells.map(cell => cell.innerText);
-                    });
-                }''')
+                table_data = await page.evaluate(
+                    f'''() => {{
+                        const rows = Array.from(document.querySelectorAll('{selector} tr'));
+                        return rows.map(row => {{
+                            const cells = Array.from(row.querySelectorAll('th, td'));
+                            return cells.map(cell => cell.innerText);
+                        }});
+                    }}'''
+                )
                 return ActionResult(extracted_content=json.dumps(table_data))
             except Exception as e:
                 return ActionResult(error=str(e))
@@ -337,6 +337,7 @@ class CustomController(Controller):
         @self.registry.action("Call External API")
         async def call_external_api(browser: BrowserContext, url: str, method: str = "GET", data: Optional[str] = None):
             try:
+                import aiohttp
                 async with aiohttp.ClientSession() as session:
                     if method == "GET":
                         async with session.get(url) as response:
