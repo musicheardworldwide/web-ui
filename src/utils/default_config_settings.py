@@ -20,7 +20,7 @@ def default_config():
         "llm_api_key": "sk-2406b6ef10774af08dfb0a12d235cb98",
         "use_own_browser": os.getenv("CHROME_PERSISTENT_SESSION", "false").lower() == "true",
         "keep_browser_open": False,
-        "headless": False,
+        "headless": True,
         "disable_security": True,
         "enable_recording": True,
         "window_w": 1280,
@@ -28,7 +28,7 @@ def default_config():
         "save_recording_path": "./tmp/record_videos",
         "save_trace_path": "./tmp/traces",
         "save_agent_history_path": "./tmp/agent_history",
-        "task": "go to musicheardworldwide.com",
+        "task": "1. Go to google.com and search for `Wes Mane Class Youtube` and find the link that goes to that song on youtube. Get to where you can start the video and when you do, move on to the next task. 2. Open a new tab and go to securexchange.online. Find the login button in the top navigation and use the credentials system@musicheardworldwide.com with password `testing123!`. once you're logged in, move onto the next task. 3. Go to https://onlinenotepad.org/notepad and write in the notepad `Thanks for watching me do my thing!, respect always, Sin AI",
     }
 
 
@@ -97,7 +97,7 @@ def update_ui_from_config(config_file):
                 gr.update(value=loaded_config.get("llm_api_key", "sk-2406b6ef10774af08dfb0a12d235cb98")),
                 gr.update(value=loaded_config.get("use_own_browser", False)),
                 gr.update(value=loaded_config.get("keep_browser_open", False)),
-                gr.update(value=loaded_config.get("headless", False)),
+                gr.update(value=loaded_config.get("headless", True)),
                 gr.update(value=loaded_config.get("disable_security", True)),
                 gr.update(value=loaded_config.get("enable_recording", True)),
                 gr.update(value=loaded_config.get("window_w", 1280)),
@@ -105,7 +105,7 @@ def update_ui_from_config(config_file):
                 gr.update(value=loaded_config.get("save_recording_path", "./tmp/record_videos")),
                 gr.update(value=loaded_config.get("save_trace_path", "./tmp/traces")),
                 gr.update(value=loaded_config.get("save_agent_history_path", "./tmp/agent_history")),
-                gr.update(value=loaded_config.get("task", "go to musicheardworldwide.com")),
+                gr.update(value=loaded_config.get("task", "1. Go to google.com and search for `Wes Mane Class Youtube` and find the link that goes to that song on youtube. Get to where you can start the video and when you do, move on to the next task. 2. Open a new tab and go to securexchange.online. Find the login button in the top navigation and use the credentials system@musicheardworldwide.com with password `testing123!`. once you're logged in, move onto the next task. 3. Go to https://onlinenotepad.org/notepad and write in the notepad `Thanks for watching me do my thing!, respect always, Sin AI")),
                 "Configuration loaded successfully."
             )
         else:
