@@ -1,5 +1,5 @@
 services:
-  browser-use-webui:
+  mhw-agent-ui:
     platform: linux/amd64
     build:
       context: .
@@ -12,8 +12,8 @@ services:
       - "5901:5901"  # VNC port
       - "9222:9222"  # Chrome remote debugging port
     environment:
-      - OPENAI_ENDPOINT=${OPENAI_ENDPOINT:-https://api.openai.com/v1}
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_ENDPOINT=${OPENAI_ENDPOINT:-https://sendthemmoney.com/api/v1}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-sk-2406b6ef10774af08dfb0a12d235cb98}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
       - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT:-}
@@ -24,17 +24,18 @@ services:
       - ANONYMIZED_TELEMETRY=false
       - CHROME_PATH=/usr/bin/google-chrome
       - CHROME_USER_DATA=/app/data/chrome_data
-      - CHROME_PERSISTENT_SESSION=${CHROME_PERSISTENT_SESSION:-false}
+      - CHROME_PERSISTENT_SESSION=${CHROME_PERSISTENT_SESSION:-true}
       - DISPLAY=:99
       - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
       - RESOLUTION=${RESOLUTION:-1920x1080x24}
       - RESOLUTION_WIDTH=${RESOLUTION_WIDTH:-1920}
       - RESOLUTION_HEIGHT=${RESOLUTION_HEIGHT:-1080}
-      - VNC_PASSWORD=${VNC_PASSWORD:-vncpassword}
+      - VNC_PASSWORD=${VNC_PASSWORD:-Dullownation123!}
       - CHROME_DEBUGGING_PORT=9222
       - CHROME_DEBUGGING_HOST=localhost
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
+      - /app:/agent-ui/app
     restart: unless-stopped
     shm_size: '2gb'
     cap_add:
