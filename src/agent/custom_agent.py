@@ -87,8 +87,8 @@ class CustomAgent(Agent):
             register_new_step_callback: Callable[['BrowserState', 'AgentOutput', int], None] | None = None,
             register_done_callback: Callable[['AgentHistoryList'], None] | None = None,
             tool_calling_method: Optional[str] = 'auto',
-            page_extraction_llm: Optional[BaseChatModel] = None,
-            planner_llm: Optional[BaseChatModel] = None,
+            page_extraction_llm: Optional[BaseChatModel] = "llama3.2:3b",
+            planner_llm: Optional[BaseChatModel] = "moonshot-v1-32k-vision-preview",
             planner_interval: int = 1,  # Run planner every N steps
     ):
 
