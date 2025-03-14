@@ -69,7 +69,7 @@ class CustomAgent(Agent):
             max_error_length: int = 400,
             max_actions_per_step: int = 10,
             tool_call_in_content: bool = True,
-            initial_actions: Optional[List[Dict[str, Dict[str, Any]]]] = None,
+            initial_actions: Optional[List[Dict[str, Dict[str, Any]]] = None,
             # Cloud Callbacks
             register_new_step_callback: Optional[Callable[['BrowserState', 'AgentOutput', int], None]] = None,
             register_done_callback: Optional[Callable[['AgentHistoryList'], None]] = None,
@@ -236,7 +236,19 @@ class CustomAgent(Agent):
             logger.debug(f'Error parsing planning analysis: {e}')
             logger.info(f'📋 Plans: {plan}')
 
-    # Rest of the script remains unchanged...
+    def update_step_info(self, model_output: CustomAgentOutput, step_info: CustomAgentStepInfo) -> None:
+        """
+        Update the step_info object with the latest information from the model_output.
+
+        Args:
+            model_output (CustomAgentOutput): The output from the model after processing the step.
+            step_info (CustomAgentStepInfo): The step information object to be updated.
+        """
+        if model_output and step_info:
+            step_info.memory = model_output.current_state.important_contents
+            step_info.task_progress = model_output.current_state.task_progress
+            step_info.future_plans = model_output.current_state.future_plans
+            step_info.step_number = self.n_steps
 
     @time_execution_async("--step")
     async def step(self, step_info: Optional[CustomAgentStepInfo] = None) -> None:
