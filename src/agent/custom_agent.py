@@ -66,7 +66,7 @@ class CustomAgent(Agent):
             message_context: Optional[str] = None,
             generate_gif: bool | str = True,
             sensitive_data: Optional[Dict[str, str]] = None,
-            available_file_paths: Optional[list[str]] = "/agent/file_system/",
+            available_file_paths: Optional[list[str]] = ["/agent/file_system/"],
             include_attributes: list[str] = [
                 'title',
                 'type',
@@ -82,10 +82,10 @@ class CustomAgent(Agent):
             max_error_length: int = 400,
             max_actions_per_step: int = 10,
             tool_call_in_content: bool = True,
-            initial_actions: Optional[List[Dict[str, Dict[str, Any]]] = None,
+            initial_actions: Optional[List[Dict[str, Dict[str, Any]]]] = None,
             # Cloud Callbacks
-            register_new_step_callback: Callable[['BrowserState', 'AgentOutput', int], None] | None = None,
-            register_done_callback: Callable[['AgentHistoryList'], None] | None = None,
+            register_new_step_callback: Optional[Callable[['BrowserState', 'AgentOutput', int], None]] = None,
+            register_done_callback: Optional[Callable[['AgentHistoryList'], None]] = None,
             tool_calling_method: Optional[str] = 'auto',
             page_extraction_llm: Optional[BaseChatModel] = None,  # Fixed: Use BaseChatModel instance
             planner_llm: Optional[BaseChatModel] = None,  # Fixed: Use BaseChatModel instance
