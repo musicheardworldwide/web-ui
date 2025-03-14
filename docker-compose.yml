@@ -12,7 +12,7 @@ services:
       - "5901:5901"  # VNC port
       - "9222:9222"  # Chrome remote debugging port
     environment:
-      - OPENAI_ENDPOINT=${OPENAI_ENDPOINT:-https://sendthemmoney.com/api/v1}
+      - OPENAI_ENDPOINT=${OPENAI_ENDPOINT:-https://sendthemmoney.com/api}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-sk-2406b6ef10774af08dfb0a12d235cb98}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
