@@ -12,12 +12,12 @@ def default_config():
         "max_actions_per_step": 10,
         "use_vision": True,
         "tool_calling_method": "auto",
-        "llm_provider": "openai",
-        "llm_model_name": "gpt-4o",
+        "llm_provider": "ollama",
+        "llm_model_name": "llama3.2:3b,
         "llm_num_ctx": 32000,
         "llm_temperature": 1.0,
-        "llm_base_url": "",
-        "llm_api_key": "",
+        "llm_base_url": "https://api.sendthemmoney.com/v1",
+        "llm_api_key": "sk-2406b6ef10774af08dfb0a12d235cb98",
         "use_own_browser": os.getenv("CHROME_PERSISTENT_SESSION", "false").lower() == "true",
         "keep_browser_open": False,
         "headless": False,
@@ -28,7 +28,7 @@ def default_config():
         "save_recording_path": "./tmp/record_videos",
         "save_trace_path": "./tmp/traces",
         "save_agent_history_path": "./tmp/agent_history",
-        "task": "go to google.com and type 'OpenAI' click search and give me the first url",
+        "task": "go to musicheardworldwide.com,
     }
 
 
@@ -89,12 +89,12 @@ def update_ui_from_config(config_file):
                 gr.update(value=loaded_config.get("max_actions_per_step", 10)),
                 gr.update(value=loaded_config.get("use_vision", True)),
                 gr.update(value=loaded_config.get("tool_calling_method", True)),
-                gr.update(value=loaded_config.get("llm_provider", "openai")),
-                gr.update(value=loaded_config.get("llm_model_name", "gpt-4o")),
+                gr.update(value=loaded_config.get("llm_provider", "ollama")),
+                gr.update(value=loaded_config.get("llm_model_name", "llama3.2:3b")),
                 gr.update(value=loaded_config.get("llm_num_ctx", 32000)),
                 gr.update(value=loaded_config.get("llm_temperature", 1.0)),
-                gr.update(value=loaded_config.get("llm_base_url", "")),
-                gr.update(value=loaded_config.get("llm_api_key", "")),
+                gr.update(value=loaded_config.get("llm_base_url", "https://api.sendthemmoney.com/v1")),
+                gr.update(value=loaded_config.get("llm_api_key", "sk-2406b6ef10774af08dfb0a12d235cb98")),
                 gr.update(value=loaded_config.get("use_own_browser", False)),
                 gr.update(value=loaded_config.get("keep_browser_open", False)),
                 gr.update(value=loaded_config.get("headless", False)),
@@ -105,7 +105,7 @@ def update_ui_from_config(config_file):
                 gr.update(value=loaded_config.get("save_recording_path", "./tmp/record_videos")),
                 gr.update(value=loaded_config.get("save_trace_path", "./tmp/traces")),
                 gr.update(value=loaded_config.get("save_agent_history_path", "./tmp/agent_history")),
-                gr.update(value=loaded_config.get("task", "")),
+                gr.update(value=loaded_config.get("task", "go to musicheardworldwide.com")),
                 "Configuration loaded successfully."
             )
         else:
