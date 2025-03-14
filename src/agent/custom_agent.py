@@ -1,14 +1,13 @@
 import json
 import logging
-import pdb
-import traceback
-from typing import Optional, Type, List, Dict, Any, Callable
-from PIL import Image, ImageDraw, ImageFont
 import os
 import base64
 import io
 import platform
-from browser_use.agent.prompts import SystemPrompt, AgentMessagePrompt
+from typing import Optional, Type, List, Dict, Any, Callable
+from PIL import Image, ImageDraw, ImageFont
+
+from browser_use.agent.prompts import SystemPrompt, AgentMessagePrompt, PlannerPrompt
 from browser_use.agent.service import Agent
 from browser_use.agent.views import (
     ActionResult,
@@ -19,7 +18,6 @@ from browser_use.agent.views import (
 )
 from browser_use.browser.browser import Browser
 from browser_use.browser.context import BrowserContext
-from browser_use.browser.views import BrowserStateHistory
 from browser_use.controller.service import Controller
 from browser_use.telemetry.views import (
     AgentEndTelemetryEvent,
@@ -33,11 +31,8 @@ from langchain_core.messages import (
     HumanMessage,
     AIMessage
 )
-from browser_use.agent.prompts import PlannerPrompt
 
-from json_repair import repair_json
 from src.utils.agent_state import AgentState
-
 from .custom_message_manager import CustomMessageManager
 from .custom_views import CustomAgentOutput, CustomAgentStepInfo
 
@@ -50,8 +45,8 @@ class CustomAgent(Agent):
             task: str,
             llm: BaseChatModel,
             add_infos: str = "Respond with ONLY JSON",
-            browser: Browser | None = None,
-            browser_context: BrowserContext | None = None,
+            browser: Optional[Browser] = None,
+            browser_context: Optional[BrowserContext] = None,
             controller: Controller = Controller(),
             use_vision: bool = False,
             use_vision_for_planner: bool = True,
@@ -66,18 +61,10 @@ class CustomAgent(Agent):
             message_context: Optional[str] = None,
             generate_gif: bool | str = True,
             sensitive_data: Optional[Dict[str, str]] = None,
-            available_file_paths: Optional[list[str]] = ["/agent/file_system/"],
-            include_attributes: list[str] = [
-                'title',
-                'type',
-                'name',
-                'role',
-                'tabindex',
-                'aria-label',
-                'placeholder',
-                'value',
-                'alt',
-                'aria-expanded',
+            available_file_paths: Optional[List[str]] = ["/agent/file_system/"],
+            include_attributes: List[str] = [
+                'title', 'type', 'name', 'role', 'tabindex', 'aria-label',
+                'placeholder', 'value', 'alt', 'aria-expanded'
             ],
             max_error_length: int = 400,
             max_actions_per_step: int = 10,
