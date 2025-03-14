@@ -30,4 +30,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: musicheardworldwide/agent-ui:latest
+        tags: musicheardworldwide/agent-ui:dev
