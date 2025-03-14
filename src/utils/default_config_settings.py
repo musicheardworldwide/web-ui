@@ -28,7 +28,7 @@ def default_config():
         "save_recording_path": "./tmp/record_videos",
         "save_trace_path": "./tmp/traces",
         "save_agent_history_path": "./tmp/agent_history",
-        "task": "1. Go to google.com and search for `Wes Mane Class Youtube` and find the link that goes to that song on youtube. Get to where you can start the video and when you do, move on to the next task. 2. Open a new tab and go to securexchange.online. Find the login button in the top navigation and use the credentials system@musicheardworldwide.com with password `testing123!`. once you're logged in, move onto the next task. 3. Go to https://onlinenotepad.org/notepad and write in the notepad `Thanks for watching me do my thing!, respect always, Sin AI",
+        "task": "1. Go to google.com and search for `Wes Mane Class Youtube` and find the link that goes to that song on youtube. Get to where you can start the video and when you do, move on to the next task. 2. Open a new tab and go to securexchange.online. Find the login button in the top navigation and use the credentials system@musicheardworldwide.com with password `testing123!`. once you're logged in, move onto the next task. 3. Go to https://onlinenotepad.org/notepad and write in the notepad `Thanks for watching me do my thing!, respect always, Sin AI`",
     }
 
 
@@ -88,7 +88,7 @@ def update_ui_from_config(config_file):
                 gr.update(value=loaded_config.get("max_steps", 100)),
                 gr.update(value=loaded_config.get("max_actions_per_step", 10)),
                 gr.update(value=loaded_config.get("use_vision", True)),
-                gr.update(value=loaded_config.get("tool_calling_method", True)),
+                gr.update(value=loaded_config.get("tool_calling_method", "auto")),
                 gr.update(value=loaded_config.get("llm_provider", "ollama")),
                 gr.update(value=loaded_config.get("llm_model_name", "llama3.2:3b")),
                 gr.update(value=loaded_config.get("llm_num_ctx", 32000)),
