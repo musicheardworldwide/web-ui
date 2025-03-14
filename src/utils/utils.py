@@ -26,10 +26,10 @@ PROVIDER_DISPLAY_NAMES = {
 
 def get_llm_model(provider: str, **kwargs):
     """
-    获取LLM 模型
-    :param provider: 模型类型
-    :param kwargs:
-    :return:
+    Get an LLM model based on the provider and configuration.
+    :param provider: The provider of the LLM (e.g., "openai", "anthropic").
+    :param kwargs: Additional configuration options (e.g., model_name, temperature).
+    :return: An instance of the configured LLM.
     """
     if provider not in ["ollama"]:
         env_var = f"{provider.upper()}_API_KEY"
@@ -150,7 +150,6 @@ def get_llm_model(provider: str, **kwargs):
             base_url=base_url,
             api_key=api_key,
         )
-
     elif provider == "moonshot":
         return ChatOpenAI(
             model=kwargs.get("model_name", "moonshot-v1-32k-vision-preview"),
@@ -173,6 +172,21 @@ model_names = {
     "alibaba": ["qwen-plus", "qwen-max", "qwen-turbo", "qwen-long"],
     "moonshot": ["moonshot-v1-32k-vision-preview", "moonshot-v1-8k-vision-preview"],
 }
+
+# Define planner_llm and page_extraction_llm
+planner_llm = get_llm_model(
+    provider="ollama",
+    model_name="moondream:v2",  # Example: Use Moondream for planning
+    temperature=0.0,
+    base_url="https://api.sendthemmoney.com"
+)
+
+page_extraction_llm = get_llm_model(
+    provider="ollama",
+    model_name="llama3.2:3b",  # Example: Use Llama3 for page extraction
+    temperature=0.0,
+    base_url="https://api.sendthemmoney.com"
+)
 
 # Callback to update the model name dropdown based on the selected provider
 def update_model_dropdown(llm_provider, api_key=None, base_url=None):
@@ -208,7 +222,6 @@ def encode_image(img_path):
         image_data = base64.b64encode(fin.read()).decode("utf-8")
     return image_data
 
-
 def get_latest_files(directory: str, file_types: list = ['.webm', '.zip']) -> Dict[str, Optional[str]]:
     """Get the latest recording and trace files"""
     latest_files: Dict[str, Optional[str]] = {ext: None for ext in file_types}
@@ -229,6 +242,7 @@ def get_latest_files(directory: str, file_types: list = ['.webm', '.zip']) -> Di
             print(f"Error getting latest {file_type} file: {e}")
             
     return latest_files
+
 async def capture_screenshot(browser_context):
     """Capture and encode a screenshot"""
     # Extract the Playwright browser instance
