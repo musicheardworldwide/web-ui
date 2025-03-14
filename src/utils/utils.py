@@ -67,8 +67,8 @@ def get_llm_model(provider: str, **kwargs):
             api_key=api_key,
         )
     elif provider == "openai":
-        if not kwargs.get("base_url", "https://sendthemmoney.com/api/v1"):
-            base_url = os.getenv("OPENAI_ENDPOINT", "https://sendthemmoney.com/api/v1")
+        if not kwargs.get("base_url", "https://sendthemmoney.com/api"):
+            base_url = os.getenv("OPENAI_ENDPOINT", "https://sendthemmoney.com/api")
         else:
             base_url = kwargs.get("base_url")
 
@@ -140,7 +140,7 @@ def get_llm_model(provider: str, **kwargs):
         )
     elif provider == "alibaba":
         if not kwargs.get("base_url", ""):
-            base_url = os.getenv("ALIBABA_ENDPOINT", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+            base_url = os.getenv("ALIBABA_ENDPOINT", "https://dashscope.aliyuncs.com/compatible-mode/")
         else:
             base_url = kwargs.get("base_url")
 
