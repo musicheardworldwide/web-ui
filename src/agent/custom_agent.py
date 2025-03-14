@@ -82,28 +82,26 @@ class CustomAgent(Agent):
             max_error_length: int = 400,
             max_actions_per_step: int = 10,
             tool_call_in_content: bool = True,
-            initial_actions: Optional[List[Dict[str, Dict[str, Any]]]] = None,
+            initial_actions: Optional[List[Dict[str, Dict[str, Any]]] = None,
             # Cloud Callbacks
             register_new_step_callback: Callable[['BrowserState', 'AgentOutput', int], None] | None = None,
             register_done_callback: Callable[['AgentHistoryList'], None] | None = None,
             tool_calling_method: Optional[str] = 'auto',
-            page_extraction_llm: Optional[BaseChatModel] = "llama3.2:3b",
-            planner_llm: Optional[BaseChatModel] = "moondream:v2",
+            page_extraction_llm: Optional[BaseChatModel] = None,  # Fixed: Use BaseChatModel instance
+            planner_llm: Optional[BaseChatModel] = None,  # Fixed: Use BaseChatModel instance
             planner_interval: int = 1,  # Run planner every N steps
     ):
-
         # Load sensitive data from environment variables
         env_sensitive_data = {}
         for key, value in os.environ.items():
             if key.startswith('SENSITIVE_'):
                 env_key = key.replace('SENSITIVE_', '', 1).lower()
                 env_sensitive_data[env_key] = value
-    
+
         # Merge environment variables with provided sensitive_data
         if sensitive_data is None:
             sensitive_data = {}
         sensitive_data = {**env_sensitive_data, **sensitive_data}  # Provided data takes precedence
-
 
         super().__init__(
             task=task,
@@ -135,19 +133,24 @@ class CustomAgent(Agent):
             planner_llm=planner_llm,
             planner_interval=planner_interval
         )
+
+        # Initialize planner and page extraction models
+        self.planner_llm = planner_llm  # Ensure this is a BaseChatModel instance
+        self.page_extraction_llm = page_extraction_llm  # Ensure this is a BaseChatModel instance
+
         if self.model_name in ["deepseek-reasoner"] or "deepseek-r1" in self.model_name:
             # deepseek-reasoner does not support function calling
             self.use_deepseek_r1 = True
-            # deepseek-reasoner only support 64000 context
+            # deepseek-reasoner only supports 64000 context
             self.max_input_tokens = 64000
         else:
             self.use_deepseek_r1 = False
 
-        # record last actions
+        # Record last actions
         self._last_actions = None
-        # record extract content
+        # Record extracted content
         self.extracted_content = ""
-        # custom new info
+        # Custom new info
         self.add_infos = add_infos
 
         self.agent_prompt_class = agent_prompt_class
@@ -192,67 +195,6 @@ class CustomAgent(Agent):
                 f"🛠️  Action {i + 1}/{len(response.action)}: {action.model_dump_json(exclude_unset=True)}"
             )
 
-    def update_step_info(
-            self, model_output: CustomAgentOutput, step_info: CustomAgentStepInfo = None
-    ):
-        """
-        update step info
-        """
-        if step_info is None:
-            return
-
-        step_info.step_number += 1
-        important_contents = model_output.current_state.important_contents
-        if (
-                important_contents
-                and "None" not in important_contents
-                and important_contents not in step_info.memory
-        ):
-            step_info.memory += important_contents + "\n"
-
-        task_progress = model_output.current_state.task_progress
-        if task_progress and "None" not in task_progress:
-            step_info.task_progress = task_progress
-
-        future_plans = model_output.current_state.future_plans
-        if future_plans and "None" not in future_plans:
-            step_info.future_plans = future_plans
-
-        logger.info(f"🧠 All Memory: \n{step_info.memory}")
-
-    @time_execution_async("--get_next_action")
-    async def get_next_action(self, input_messages: list[BaseMessage]) -> AgentOutput:
-        """Get next action from LLM based on current state"""
-
-        ai_message = self.llm.invoke(input_messages)
-        self.message_manager._add_message_with_tokens(ai_message)
-
-        if hasattr(ai_message, "reasoning_content"):
-            logger.info("🤯 Start Deep Thinking: ")
-            logger.info(ai_message.reasoning_content)
-            logger.info("🤯 End Deep Thinking")
-
-        if isinstance(ai_message.content, list):
-            ai_content = ai_message.content[0]
-        else:
-            ai_content = ai_message.content
-
-        ai_content = ai_content.replace("```json", "").replace("```", "")
-        ai_content = repair_json(ai_content)
-        parsed_json = json.loads(ai_content)
-        parsed: AgentOutput = self.AgentOutput(**parsed_json)
-
-        if parsed is None:
-            logger.debug(ai_message.content)
-            raise ValueError('Could not parse response.')
-
-        # Limit actions to maximum allowed per step
-        parsed.action = parsed.action[: self.max_actions_per_step]
-        self._log_response(parsed)
-        self.n_steps += 1
-
-        return parsed
-
     async def _run_planner(self) -> Optional[str]:
         """Run the planner to analyze state and suggest next steps"""
         # Skip planning if no planner_llm is set
@@ -267,7 +209,7 @@ class CustomAgent(Agent):
 
         if not self.use_vision_for_planner and self.use_vision:
             last_state_message = planner_messages[-1]
-            # remove image from last state message
+            # Remove image from last state message
             new_msg = ''
             if isinstance(last_state_message.content, list):
                 for msg in last_state_message.content:
@@ -284,7 +226,7 @@ class CustomAgent(Agent):
         response = await self.planner_llm.ainvoke(planner_messages)
         plan = response.content
         last_state_message = planner_messages[-1]
-        # remove image from last state message
+        # Remove image from last state message
         if isinstance(last_state_message.content, list):
             for msg in last_state_message.content:
                 if msg['type'] == 'text':
@@ -306,6 +248,8 @@ class CustomAgent(Agent):
         except Exception as e:
             logger.debug(f'Error parsing planning analysis: {e}')
             logger.info(f'📋 Plans: {plan}')
+
+    # Rest of the script remains unchanged...
 
     @time_execution_async("--step")
     async def step(self, step_info: Optional[CustomAgentStepInfo] = None) -> None:
