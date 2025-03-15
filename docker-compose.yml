@@ -35,7 +35,6 @@ services:
       - CHROME_DEBUGGING_HOST=localhost
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - 
     restart: unless-stopped
     shm_size: '2gb'
     cap_add:

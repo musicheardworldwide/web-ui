@@ -73,7 +73,8 @@ async def stop_agent():
 
     try:
         # Request stop
-        _global_agent.stop()
+        if _global_agent is not None:
+            _global_agent.stop()
 
         # Update UI immediately
         message = "Stop requested - the agent will halt at the next safe point"
@@ -322,7 +323,7 @@ async def run_org_agent(
             _global_browser = Browser(
                 config=BrowserConfig(
                     headless=headless,
-                    cdp_url=cdp_url,
+                    # cdp_url=cdp_url,
                     disable_security=disable_security,
                     chrome_instance_path=chrome_path,
                     extra_chromium_args=extra_chromium_args,
