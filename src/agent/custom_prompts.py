@@ -98,7 +98,7 @@ class CustomAgentMessagePrompt(AgentMessagePrompt):
                     if result.extracted_content:
                         state_description += f"Result of previous action {i + 1}/{len(self.result)}: {result.extracted_content}\n"
 
-        if self.state.screenshot and use_vision == True:
+        if self.state.screenshot and use_vision:
             # Format message for vision model
             return HumanMessage(
                 content=[

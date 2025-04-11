@@ -76,7 +76,7 @@ class CustomAgent(Agent):
             register_external_agent_status_raise_error_callback: Callable[[], Awaitable[bool]] | None = None,
             # Agent settings
             use_vision: bool = True,
-            use_vision_for_planner: bool = False,
+            use_vision_for_planner: bool = True,
             save_conversation_path: Optional[str] = None,
             save_conversation_path_encoding: Optional[str] = 'utf-8',
             max_failures: int = 3,
@@ -254,21 +254,6 @@ class CustomAgent(Agent):
             PlannerPrompt(self.controller.registry.get_prompt_description()).get_system_message(),
             *self.message_manager.get_messages()[1:],  # Use full message history except the first
         ]
-
-        if not self.settings.use_vision_for_planner and self.settings.use_vision:
-            last_state_message: HumanMessage = planner_messages[-1]
-            # remove image from last state message
-            new_msg = ''
-            if isinstance(last_state_message.content, list):
-                for msg in last_state_message.content:
-                    if msg['type'] == 'text':
-                        new_msg += msg['text']
-                    elif msg['type'] == 'image_url':
-                        continue
-            else:
-                new_msg = last_state_message.content
-
-            planner_messages[-1] = HumanMessage(content=new_msg)
 
         # Get planner output
         response = await self.settings.planner_llm.ainvoke(planner_messages)
