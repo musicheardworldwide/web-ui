@@ -191,7 +191,10 @@ async def run_browser_agent(
         max_actions_per_step,
         tool_calling_method,
         chrome_cdp,
-        max_input_tokens
+        max_input_tokens,
+        planner_llm_model_name,
+        page_extraction_llm_model_name,
+        planner_interval
 ):
     try:
         # Disable recording if the checkbox is unchecked
@@ -221,6 +224,22 @@ async def run_browser_agent(
             base_url=llm_base_url,
             api_key=llm_api_key,
         )
+        planner_llm = utils.get_llm_model(
+            provider=llm_provider,
+            model_name=planner_llm_model_name,
+            num_ctx=llm_num_ctx,
+            temperature=llm_temperature,
+            base_url=llm_base_url,
+            api_key=llm_api_key,
+        )
+        page_extraction_llm = utils.get_llm_model(
+            provider=llm_provider,
+            model_name=page_extraction_llm_model_name,
+            num_ctx=llm_num_ctx,
+            temperature=llm_temperature,
+            base_url=llm_base_url,
+            api_key=llm_api_key,
+        )
         if agent_type == "org":
             final_result, errors, model_actions, model_thoughts, trace_file, history_file = await run_org_agent(
                 llm=llm,
@@ -239,7 +258,10 @@ async def run_browser_agent(
                 max_actions_per_step=max_actions_per_step,
                 tool_calling_method=tool_calling_method,
                 chrome_cdp=chrome_cdp,
-                max_input_tokens=max_input_tokens
+                max_input_tokens=max_input_tokens,
+                planner_llm=planner_llm,
+                page_extraction_llm=page_extraction_llm,
+                planner_interval=planner_interval
             )
         elif agent_type == "custom":
             final_result, errors, model_actions, model_thoughts, trace_file, history_file = await run_custom_agent(
@@ -260,7 +282,10 @@ async def run_browser_agent(
                 max_actions_per_step=max_actions_per_step,
                 tool_calling_method=tool_calling_method,
                 chrome_cdp=chrome_cdp,
-                max_input_tokens=max_input_tokens
+                max_input_tokens=max_input_tokens,
+                planner_llm=planner_llm,
+                page_extraction_llm=page_extraction_llm,
+                planner_interval=planner_interval
             )
         else:
             raise ValueError(f"Invalid agent type: {agent_type}")
@@ -327,7 +352,10 @@ async def run_org_agent(
         max_actions_per_step,
         tool_calling_method,
         chrome_cdp,
-        max_input_tokens
+        max_input_tokens,
+        planner_llm,
+        page_extraction_llm,
+        planner_interval
 ):
     try:
         global _global_browser, _global_browser_context, _global_agent
@@ -379,7 +407,10 @@ async def run_org_agent(
                 max_actions_per_step=max_actions_per_step,
                 tool_calling_method=tool_calling_method,
                 max_input_tokens=max_input_tokens,
-                generate_gif=True
+                generate_gif=True,
+                planner_llm=planner_llm,
+                page_extraction_llm=page_extraction_llm,
+                planner_interval=planner_interval
             )
         history = await _global_agent.run(max_steps=max_steps)
 
@@ -430,7 +461,10 @@ async def run_custom_agent(
         max_actions_per_step,
         tool_calling_method,
         chrome_cdp,
-        max_input_tokens
+        max_input_tokens,
+        planner_llm,
+        page_extraction_llm,
+        planner_interval
 ):
     try:
         global _global_browser, _global_browser_context, _global_agent
@@ -491,7 +525,10 @@ async def run_custom_agent(
                 max_actions_per_step=max_actions_per_step,
                 tool_calling_method=tool_calling_method,
                 max_input_tokens=max_input_tokens,
-                generate_gif=True
+                generate_gif=True,
+                planner_llm=planner_llm,
+                page_extraction_llm=page_extraction_llm,
+                planner_interval=planner_interval
             )
         history = await _global_agent.run(max_steps=max_steps)
 
@@ -549,7 +586,10 @@ async def run_with_stream(
         max_actions_per_step,
         tool_calling_method,
         chrome_cdp,
-        max_input_tokens
+        max_input_tokens,
+        planner_llm_model_name,
+        page_extraction_llm_model_name,
+        planner_interval
 ):
     global _global_agent
 
@@ -581,7 +621,10 @@ async def run_with_stream(
             max_actions_per_step=max_actions_per_step,
             tool_calling_method=tool_calling_method,
             chrome_cdp=chrome_cdp,
-            max_input_tokens=max_input_tokens
+            max_input_tokens=max_input_tokens,
+            planner_llm_model_name=planner_llm_model_name,
+            page_extraction_llm_model_name=page_extraction_llm_model_name,
+            planner_interval=planner_interval
         )
         # Add HTML content at the start of the result array
         yield [gr.update(visible=False)] + list(result)
@@ -614,7 +657,10 @@ async def run_with_stream(
                     max_actions_per_step=max_actions_per_step,
                     tool_calling_method=tool_calling_method,
                     chrome_cdp=chrome_cdp,
-                    max_input_tokens=max_input_tokens
+                    max_input_tokens=max_input_tokens,
+                    planner_llm_model_name=planner_llm_model_name,
+                    page_extraction_llm_model_name=page_extraction_llm_model_name,
+                    planner_interval=planner_interval
                 )
             )
 
@@ -844,6 +890,31 @@ def create_ui(theme_name="Ocean"):
                             info="Tool Calls Funtion Name",
                             visible=False
                         )
+                        planner_llm_model_name = gr.Dropdown(
+                            label="Planner LLM Model Name",
+                            choices=utils.model_names['openai'],
+                            value="gpt-4o",
+                            interactive=True,
+                            allow_custom_value=True,  # Allow users to input custom model names
+                            info="Select a model in the dropdown options or directly type a custom model name"
+                        )
+                        page_extraction_llm_model_name = gr.Dropdown(
+                            label="Page Extraction LLM Model Name",
+                            choices=utils.model_names['openai'],
+                            value="gpt-4o",
+                            interactive=True,
+                            allow_custom_value=True,  # Allow users to input custom model names
+                            info="Select a model in the dropdown options or directly type a custom model name"
+                        )
+                        planner_interval = gr.Slider(
+                            minimum=1,
+                            maximum=10,
+                            value=1,
+                            step=1,
+                            label="Planner Interval",
+                            info="Run planner every N steps",
+                            interactive=True
+                        )
 
             with gr.TabItem("🔧 LLM Settings", id=2):
                 with gr.Group():
@@ -1070,7 +1141,7 @@ def create_ui(theme_name="Ocean"):
                     use_own_browser, keep_browser_open, headless, disable_security, window_w, window_h,
                     save_recording_path, save_agent_history_path, save_trace_path,  # Include the new path
                     enable_recording, task, add_infos, max_steps, use_vision, max_actions_per_step,
-                    tool_calling_method, chrome_cdp, max_input_tokens
+                    tool_calling_method, chrome_cdp, max_input_tokens, planner_llm_model_name, page_extraction_llm_model_name, planner_interval
                 ],
                 outputs=[
                     browser_view,  # Browser view

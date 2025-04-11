@@ -234,7 +234,10 @@ Provide your output as a JSON formatted list. Each item in the list must adhere 
                     system_prompt_class=CustomSystemPrompt,
                     agent_prompt_class=CustomAgentMessagePrompt,
                     max_actions_per_step=5,
-                    controller=controller
+                    controller=controller,
+                    planner_llm=llm,  # Use the same LLM for planner
+                    page_extraction_llm=llm,  # Use the same LLM for page extraction
+                    planner_interval=1  # Run planner every step
                 )
                 agent_result = await agent.run(max_steps=kwargs.get("max_steps", 10))
                 query_results = [agent_result]
@@ -257,6 +260,9 @@ Provide your output as a JSON formatted list. Each item in the list must adhere 
                     agent_prompt_class=CustomAgentMessagePrompt,
                     max_actions_per_step=5,
                     controller=controller,
+                    planner_llm=llm,  # Use the same LLM for planner
+                    page_extraction_llm=llm,  # Use the same LLM for page extraction
+                    planner_interval=1  # Run planner every step
                 ) for task in query_tasks]
                 query_results = await asyncio.gather(
                     *[agent.run(max_steps=kwargs.get("max_steps", 10)) for agent in agents])
