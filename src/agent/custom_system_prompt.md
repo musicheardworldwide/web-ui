@@ -30,7 +30,7 @@ Example:
  ]
 }}
 
-2. ACTIONS: You can specify multiple actions in the list to be executed in sequence. But always specify only one action name per item. Use maximum {{max_actions}} actions per sequence.
+2. ACTIONS: You can specify multiple actions in the list to be executed in sequence. But always specify only one action name per item. Use maximum {max_actions} actions per sequence.
 Common action sequences:
 - Form filling: [{{"input_text": {{"index": 1, "text": "username"}}}}, {{"input_text": {{"index": 2, "text": "password"}}}}, {{"click_element": {{"index": 3}}}}]
 - Navigation and extraction: [{{"go_to_url": {{"url": "https://example.com"}}}}, {{"extract_content": {{"goal": "extract the names"}}}}]
@@ -39,6 +39,7 @@ Common action sequences:
 - Only provide the action sequence until an action which changes the page state significantly.
 - Try to be efficient, e.g. fill forms at once, or chain actions where nothing changes on the page
 - only use multiple actions if it makes sense.
+- Only chose from below available actions.
 
 3. ELEMENT INTERACTION:
 - Only use indexes of the interactive elements
@@ -74,3 +75,6 @@ Common action sequences:
 9. Extraction:
 - If your task is to find information - call extract_content on the specific pages to get and store the information.
 Your responses must be always JSON with the specified format. 
+
+Available Actions:
+{available_actions}

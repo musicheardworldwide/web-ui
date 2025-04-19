@@ -165,8 +165,23 @@ def get_llm_model(provider: str, **kwargs):
         return ChatOpenAI(
             model=kwargs.get("model_name", "gpt-4o-mini"),
             temperature=kwargs.get("temperature", 0.0),
-            base_url = os.getenv("UNBOUND_ENDPOINT", "https://api.getunbound.ai"),
+            base_url=os.getenv("UNBOUND_ENDPOINT", "https://api.getunbound.ai"),
             api_key=api_key,
+        )
+    elif provider == "siliconflow":
+        if not kwargs.get("api_key", ""):
+            api_key = os.getenv("SiliconFLOW_API_KEY", "")
+        else:
+            api_key = kwargs.get("api_key")
+        if not kwargs.get("base_url", ""):
+            base_url = os.getenv("SiliconFLOW_ENDPOINT", "")
+        else:
+            base_url = kwargs.get("base_url")
+        return ChatOpenAI(
+            api_key=api_key,
+            base_url=base_url,
+            model_name=kwargs.get("model_name", "Qwen/QwQ-32B"),
+            temperature=kwargs.get("temperature", 0.0),
         )
     else:
         raise ValueError(f"Unsupported provider: {provider}")
@@ -185,7 +200,40 @@ model_names = {
     "mistral": ["pixtral-large-latest", "mistral-large-latest", "mistral-small-latest", "ministral-8b-latest"],
     "alibaba": ["qwen-plus", "qwen-max", "qwen-turbo", "qwen-long"],
     "moonshot": ["moonshot-v1-32k-vision-preview", "moonshot-v1-8k-vision-preview"],
-    "unbound": ["gemini-2.0-flash","gpt-4o-mini", "gpt-4o", "gpt-4.5-preview"]
+    "unbound": ["gemini-2.0-flash", "gpt-4o-mini", "gpt-4o", "gpt-4.5-preview"],
+    "siliconflow": [
+        "deepseek-ai/DeepSeek-R1",
+        "deepseek-ai/DeepSeek-V3",
+        "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+        "deepseek-ai/DeepSeek-R1-Distill-Qwen-14B",
+        "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+        "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+        "deepseek-ai/DeepSeek-V2.5",
+        "deepseek-ai/deepseek-vl2",
+        "Qwen/Qwen2.5-72B-Instruct-128K",
+        "Qwen/Qwen2.5-72B-Instruct",
+        "Qwen/Qwen2.5-32B-Instruct",
+        "Qwen/Qwen2.5-14B-Instruct",
+        "Qwen/Qwen2.5-7B-Instruct",
+        "Qwen/Qwen2.5-Coder-32B-Instruct",
+        "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "Qwen/Qwen2-7B-Instruct",
+        "Qwen/Qwen2-1.5B-Instruct",
+        "Qwen/QwQ-32B-Preview",
+        "Qwen/Qwen2-VL-72B-Instruct",
+        "Qwen/Qwen2.5-VL-32B-Instruct",
+        "Qwen/Qwen2.5-VL-72B-Instruct",
+        "TeleAI/TeleChat2",
+        "THUDM/glm-4-9b-chat",
+        "Vendor-A/Qwen/Qwen2.5-72B-Instruct",
+        "internlm/internlm2_5-7b-chat",
+        "internlm/internlm2_5-20b-chat",
+        "Pro/Qwen/Qwen2.5-7B-Instruct",
+        "Pro/Qwen/Qwen2-7B-Instruct",
+        "Pro/Qwen/Qwen2-1.5B-Instruct",
+        "Pro/THUDM/chatglm3-6b",
+        "Pro/THUDM/glm-4-9b-chat",
+    ],
 }
 
 

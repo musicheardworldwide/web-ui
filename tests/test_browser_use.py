@@ -118,26 +118,26 @@ async def test_browser_use_custom():
     #     api_key=os.getenv("OPENAI_API_KEY", ""),
     # )
 
+    llm = utils.get_llm_model(
+        provider="azure_openai",
+        model_name="gpt-4o",
+        temperature=0.5,
+        base_url=os.getenv("AZURE_OPENAI_ENDPOINT", ""),
+        api_key=os.getenv("AZURE_OPENAI_API_KEY", ""),
+    )
+
     # llm = utils.get_llm_model(
-    #     provider="azure_openai",
-    #     model_name="gpt-4o",
+    #     provider="google",
+    #     model_name="gemini-2.0-flash",
     #     temperature=0.6,
-    #     base_url=os.getenv("AZURE_OPENAI_ENDPOINT", ""),
-    #     api_key=os.getenv("AZURE_OPENAI_API_KEY", ""),
+    #     api_key=os.getenv("GOOGLE_API_KEY", "")
     # )
 
-    llm = utils.get_llm_model(
-        provider="google",
-        model_name="gemini-2.0-flash",
-        temperature=0.6,
-        api_key=os.getenv("GOOGLE_API_KEY", "")
-    )
-
-    llm = utils.get_llm_model(
-        provider="deepseek",
-        model_name="deepseek-reasoner",
-        temperature=0.8
-    )
+    # llm = utils.get_llm_model(
+    #     provider="deepseek",
+    #     model_name="deepseek-reasoner",
+    #     temperature=0.8
+    # )
 
     # llm = utils.get_llm_model(
     #     provider="deepseek",
@@ -156,9 +156,9 @@ async def test_browser_use_custom():
     controller = CustomController()
     use_own_browser = True
     disable_security = True
-    use_vision = False  # Set to False when using DeepSeek
+    use_vision = True  # Set to False when using DeepSeek
 
-    max_actions_per_step = 1
+    max_actions_per_step = 10
     playwright = None
     browser = None
     browser_context = None
@@ -193,7 +193,7 @@ async def test_browser_use_custom():
             )
         )
         agent = CustomAgent(
-            task="Give me stock price of Nvidia",
+            task="open youtube in tab 1 , open google email in tab 2, open facebook in tab 3",
             add_infos="",  # some hints for llm to complete the task
             llm=llm,
             browser=browser,

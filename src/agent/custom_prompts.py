@@ -21,6 +21,18 @@ class CustomSystemPrompt(SystemPrompt):
         except Exception as e:
             raise RuntimeError(f'Failed to load system prompt template: {e}')
 
+    def get_system_message(self) -> SystemMessage:
+        """
+        Get the system prompt for the agent.
+
+        Returns:
+            SystemMessage: Formatted system prompt
+        """
+        prompt = self.prompt_template.format(max_actions=self.max_actions_per_step,
+                                             available_actions=self.default_action_description)
+
+        return SystemMessage(content=prompt)
+
 
 class CustomAgentMessagePrompt(AgentMessagePrompt):
     def __init__(

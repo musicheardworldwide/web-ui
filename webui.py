@@ -360,7 +360,7 @@ async def run_org_agent(
     try:
         global _global_browser, _global_browser_context, _global_agent
 
-        extra_chromium_args = [f"--window-size={window_w},{window_h}"]
+        extra_chromium_args = ["--accept_downloads=True", f"--window-size={window_w},{window_h}"]
         cdp_url = chrome_cdp
 
         if use_own_browser:
@@ -390,6 +390,7 @@ async def run_org_agent(
                 config=BrowserContextConfig(
                     trace_path=save_trace_path if save_trace_path else None,
                     save_recording_path=save_recording_path if save_recording_path else None,
+                    save_downloads_path="./tmp/downloads",
                     no_viewport=False,
                     browser_window_size=BrowserContextWindowSize(
                         width=window_w, height=window_h
@@ -469,7 +470,7 @@ async def run_custom_agent(
     try:
         global _global_browser, _global_browser_context, _global_agent
 
-        extra_chromium_args = [f"--window-size={window_w},{window_h}"]
+        extra_chromium_args = ["--accept_downloads=True", f"--window-size={window_w},{window_h}"]
         cdp_url = chrome_cdp
         if use_own_browser:
             cdp_url = os.getenv("CHROME_CDP", chrome_cdp)
@@ -504,6 +505,7 @@ async def run_custom_agent(
                     trace_path=save_trace_path if save_trace_path else None,
                     save_recording_path=save_recording_path if save_recording_path else None,
                     no_viewport=False,
+                    save_downloads_path="./tmp/downloads",
                     browser_window_size=BrowserContextWindowSize(
                         width=window_w, height=window_h
                     ),

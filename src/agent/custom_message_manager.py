@@ -74,7 +74,8 @@ class CustomMessageManager(MessageManager):
         min_message_len = 2 if self.context_content is not None else 1
 
         while diff > 0 and len(self.state.history.messages) > min_message_len:
-            self.state.history.remove_message(min_message_len)  # always remove the oldest message
+            msg = self.state.history.messages.pop(min_message_len)
+            self.state.history.current_tokens -= msg.metadata.tokens
             diff = self.state.history.current_tokens - self.settings.max_input_tokens
 
     def add_state_message(
@@ -104,6 +105,7 @@ class CustomMessageManager(MessageManager):
             if isinstance(self.state.history.messages[i].message, HumanMessage):
                 remove_cnt += 1
             if remove_cnt == abs(remove_ind):
-                self.state.history.messages.pop(i)
+                msg = self.state.history.messages.pop(i)
+                self.state.history.current_tokens -= msg.metadata.tokens
                 break
             i -= 1
